@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasura-postgres-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hasura-postgres
+  template:
+    metadata:
+      labels:
+        app: hasura-postgres
+    spec:
+      containers:
+        - name: hasura-postgres
+          image: postgres:12
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRES_PASSWORD
+              value: postgrespassword
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_DB
+              value: eval
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hasura-postgres-srv
+spec:
+  selector:
+    app: hasura-postgres
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432

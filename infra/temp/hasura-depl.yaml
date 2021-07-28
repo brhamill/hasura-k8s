@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasura-depl
+spec:
+  selector:
+    matchLabels:
+      app: hasura
+  template:
+    metadata:
+      labels:
+        app: hasura
+    spec:
+      containers:
+        - name: hasura
+          image: hasura/graphql-engine:v2.0.3
+          env:
+            - name: HASURA_GRAPHQL_DATABASE_URL
+              value: postgres://postgres:postgrespassword@hasura-postgres-srv:5432/eval
+            - name: HASURA_GRAPHQL_ACCESS_KEY
+              value: accessKey
+            - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+              value: 'true'
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hasura-srv
+spec:
+  selector:
+    app: hasura
+  type: NodePort
+  ports:
+    - port: 8080
+      nodePort: 30080
